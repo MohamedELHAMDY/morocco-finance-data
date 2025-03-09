@@ -1,3 +1,4 @@
+# scrape_data.py
 import os
 import requests
 import pandas as pd
@@ -62,6 +63,7 @@ def clean_data(file_path):
         cleaned_path = os.path.join(CLEANED_DIR, os.path.basename(file_path).replace(".xls", ".csv"))
         df.to_csv(cleaned_path, index=False)
         print(f"✅ Cleaned and saved: {cleaned_path}")
+        print(f"DEBUG: Cleaned file created: {cleaned_path}") #Debug line
         return cleaned_path
 
     except Exception as e:
