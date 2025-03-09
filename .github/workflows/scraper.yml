@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # Allows manual trigger
 
 permissions:
-  contents: write #Add this line
+  contents: write
 
 jobs:
   scrape:
