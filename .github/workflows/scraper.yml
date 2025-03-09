@@ -1,3 +1,4 @@
+# .github/workflows/scrape_and_clean.yml
 name: Scrape and Clean Data
 
 on:
@@ -31,4 +32,6 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git add cleaned_files/
           git commit -m "Add cleaned data" || echo "No changes to commit"
-          git push
+          git push origin HEAD:main --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
