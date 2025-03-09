@@ -17,13 +17,9 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install dependencies and set up Chrome
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip google-chrome-stable chromedriver
-
-          # Install Python dependencies
-          pip install requests pandas beautifulsoup4 selenium webdriver-manager
+          pip install requests pandas beautifulsoup4
 
       - name: Run scraper
         run: |
