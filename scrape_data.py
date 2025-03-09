@@ -1,12 +1,7 @@
 import os
-import time
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 
 # Base URL for finance datasets
 BASE_URL = "https://data.gov.ma/data/fr/dataset/?q=&groups=finance&sort=score+desc%2C+metadata_modified+desc"
@@ -17,20 +12,9 @@ CLEANED_DIR = "cleaned_files"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 os.makedirs(CLEANED_DIR, exist_ok=True)
 
-# Setup Selenium WebDriver
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-
-# Use webdriver_manager to get the ChromeDriver service
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service, options=chrome_options)
-
-# Fetch dataset pages
-driver.get(BASE_URL)
-time.sleep(3)
-soup = BeautifulSoup(driver.page_source, "html.parser")
+# Fetch dataset pages using requests
+response = requests.get(BASE_URL)
+soup = BeautifulSoup(response.content, "html.parser")
 
 # Extract dataset page links
 dataset_links = ["https://data.gov.ma" + a["href"] for a in soup.select("h3.dataset-heading a")]
@@ -39,21 +23,18 @@ print(f"🔍 Found {len(dataset_links)} datasets.")
 # Extract and download data files
 file_paths = []
 for dataset_url in dataset_links:
-    driver.get(dataset_url)
-    time.sleep(2)
-    dataset_soup = BeautifulSoup(driver.page_source, "html.parser")
+    dataset_response = requests.get(dataset_url)
+    dataset_soup = BeautifulSoup(dataset_response.content, "html.parser")
     
     for file_link in dataset_soup.select("a.resource-url-analytics"):
         file_url = file_link["href"]
         if file_url.endswith((".csv", ".xls", ".xlsx", ".json")):
             file_name = os.path.join(DOWNLOAD_DIR, file_url.split("/")[-1])
-            response = requests.get(file_url)
+            file_response = requests.get(file_url)
             with open(file_name, "wb") as f:
-                f.write(response.content)
+                f.write(file_response.content)
             print(f"✅ Downloaded: {file_name}")
             file_paths.append(file_name)
-
-driver.quit()
 
 # Clean data function
 def clean_data(file_path):
