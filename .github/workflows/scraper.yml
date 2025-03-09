@@ -18,7 +18,14 @@ jobs:
           python-version: "3.9"
 
       - name: Install dependencies
-        run: pip install requests pandas beautifulsoup4 selenium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin
+          sudo apt-get install -y google-chrome-stable
+          pip install requests pandas beautifulsoup4 selenium
 
       - name: Run scraper
         run: python scrape_data.py
