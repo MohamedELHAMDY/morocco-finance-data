@@ -36,4 +36,7 @@ jobs:
           pip install requests pandas beautifulsoup4 selenium
 
       - name: Run scraper
-        run: python scrape_data.py
+        run: |
+          export CHROME_BIN="/usr/bin/google-chrome-stable"  # Set the path for Chrome
+          export PATH=$PATH:/usr/local/bin  # Ensure chromedriver is in PATH
+          python scrape_data.py
