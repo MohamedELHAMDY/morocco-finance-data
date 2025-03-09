@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager  # Import webdriver_manager
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Base URL for finance datasets
 BASE_URL = "https://data.gov.ma/data/fr/dataset/?q=&groups=finance&sort=score+desc%2C+metadata_modified+desc"
