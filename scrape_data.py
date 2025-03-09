@@ -14,24 +14,30 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 os.makedirs(CLEANED_DIR, exist_ok=True)
 
 # Fetch dataset pages using requests
+print(f"DEBUG: Fetching dataset list from: {BASE_URL}")
 response = requests.get(BASE_URL)
+print(f"DEBUG: Dataset list response status: {response.status_code}")
 soup = BeautifulSoup(response.content, "html.parser")
 
 # Extract dataset page links
 dataset_links = ["https://data.gov.ma" + a["href"] for a in soup.select("h3.dataset-heading a")]
-print(f"🔍 Found {len(dataset_links)} datasets.")
+print(f"DEBUG: Found {len(dataset_links)} dataset links.")
 
 # Extract and download data files
 file_paths = []
 for dataset_url in dataset_links:
+    print(f"DEBUG: Processing dataset URL: {dataset_url}")
     dataset_response = requests.get(dataset_url)
+    print(f"DEBUG: Dataset response status: {dataset_response.status_code}")
     dataset_soup = BeautifulSoup(dataset_response.content, "html.parser")
     
     for file_link in dataset_soup.select("a.resource-url-analytics"):
         file_url = file_link["href"]
         if file_url.endswith((".csv", ".xls", ".xlsx", ".json")):
             file_name = os.path.join(DOWNLOAD_DIR, file_url.split("/")[-1])
+            print(f"DEBUG: Downloading file: {file_name} from: {file_url}")
             file_response = requests.get(file_url)
+            print(f"DEBUG: File response status: {file_response.status_code}")
             with open(file_name, "wb") as f:
                 f.write(file_response.content)
             print(f"✅ Downloaded: {file_name}")
@@ -39,6 +45,7 @@ for dataset_url in dataset_links:
 
 # Clean data function
 def clean_data(file_path):
+    print(f"DEBUG: Cleaning file: {file_path}")
     try:
         if file_path.endswith(".csv"):
             df = pd.read_csv(file_path, encoding="utf-8")
@@ -63,11 +70,12 @@ def clean_data(file_path):
         cleaned_path = os.path.join(CLEANED_DIR, os.path.basename(file_path).replace(".xls", ".csv"))
         df.to_csv(cleaned_path, index=False)
         print(f"✅ Cleaned and saved: {cleaned_path}")
-        print(f"DEBUG: Cleaned file created: {cleaned_path}") #Debug line
+        print(f"DEBUG: Cleaned file created: {cleaned_path}")
         return cleaned_path
 
     except Exception as e:
         print(f"⚠️ Error cleaning {file_path}: {e}")
+        print(f"DEBUG: Error cleaning {file_path}: {e}")
 
 # Clean downloaded files
 for file_path in file_paths:
