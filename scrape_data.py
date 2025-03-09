@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager  # Import webdriver_manager
 
 # Base URL for finance datasets
 BASE_URL = "https://data.gov.ma/data/fr/dataset/?q=&groups=finance&sort=score+desc%2C+metadata_modified+desc"
@@ -19,7 +20,12 @@ os.makedirs(CLEANED_DIR, exist_ok=True)
 # Setup Selenium WebDriver
 chrome_options = Options()
 chrome_options.add_argument("--headless")
-driver = webdriver.Chrome(service=Service("chromedriver"), options=chrome_options)
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+# Use webdriver_manager to get the ChromeDriver service
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # Fetch dataset pages
 driver.get(BASE_URL)
