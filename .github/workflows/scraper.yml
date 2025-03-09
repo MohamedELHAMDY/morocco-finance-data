@@ -19,25 +19,12 @@ jobs:
 
       - name: Install dependencies and set up Chrome
         run: |
-          # Install dependencies for Chrome and chromedriver
           sudo apt-get update
-          sudo apt-get install -y wget unzip
-          
-          # Install Chrome
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb
-          sudo apt-get install -f
-          
-          # Install specific version of chromedriver (version 114.0.5735.90)
-          wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin
-          
+          sudo apt-get install -y wget unzip google-chrome-stable chromedriver
+
           # Install Python dependencies
-          pip install requests pandas beautifulsoup4 selenium
+          pip install requests pandas beautifulsoup4 selenium webdriver-manager
 
       - name: Run scraper
         run: |
-          export CHROME_BIN="/usr/bin/google-chrome-stable"  # Set the path for Chrome
-          export PATH=$PATH:/usr/local/bin  # Ensure chromedriver is in PATH
           python scrape_data.py
