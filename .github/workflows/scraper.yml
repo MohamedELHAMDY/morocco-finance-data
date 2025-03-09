@@ -26,6 +26,12 @@ jobs:
         run: |
           python scrape_data.py
 
+      - name: Upload downloaded files as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: downloaded-files
+          path: downloaded_files/
+
       - name: Commit and push changes
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
